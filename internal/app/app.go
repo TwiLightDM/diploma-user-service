@@ -48,6 +48,8 @@ func Run(cfg *config.Config) error {
 		return err
 	}
 
+	log.Printf("Starting user-service on %s", listener.Addr().String())
+
 	grpcServer := grpc.NewServer()
 	userservicepb.RegisterUserServiceServer(grpcServer, userHandler)
 
@@ -59,7 +61,6 @@ func Run(cfg *config.Config) error {
 	defer stop()
 
 	go func() {
-		log.Printf("gRPC server started on %s", cfg.GRPCPort)
 		if err = grpcServer.Serve(listener); err != nil {
 			log.Printf("gRPC server stopped: %v", err)
 		}

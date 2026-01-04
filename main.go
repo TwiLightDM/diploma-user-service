@@ -10,8 +10,6 @@ import (
 func main() {
 	cfg := config.Load()
 
-	log.Printf("Starting user-service on %s", cfg.GRPCPort)
-
 	if err := app.Run(cfg); err != nil {
 		log.Fatal(err)
 	}

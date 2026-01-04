@@ -1,15 +1,19 @@
 package user_service
 
 import (
+	"context"
 	"errors"
 	"github.com/TwiLightDM/diploma-user-service/internal/entities"
 	"github.com/TwiLightDM/diploma-user-service/package/utils"
 	"github.com/google/uuid"
+	"time"
 )
 
 type UserService interface {
-	Login(email, password string) (string, string, error)
-	Signup(email, password, fullName, role string) error
+	Login(ctx context.Context, email, password string) (string, string, error)
+	SignUp(ctx context.Context, email, password, fullName, role string) error
+	ReedById(ctx context.Context, id string) (*entities.User, error)
+	UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error)
 }
 
 type userService struct {
@@ -22,8 +26,11 @@ func NewUserService(repo UserRepository, jwt *utils.JWTService, encrypt *utils.E
 	return &userService{repo: repo, jwt: jwt, encrypt: encrypt}
 }
 
-func (s *userService) Login(email, password string) (string, string, error) {
-	user, err := s.repo.GetByEmail(email)
+func (s *userService) Login(ctx context.Context, email, password string) (string, string, error) {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+
+	user, err := s.repo.ReadByEmail(ctx, email)
 	if err != nil {
 		return "", "", err
 	}
@@ -52,8 +59,11 @@ func (s *userService) Login(email, password string) (string, string, error) {
 	return accessToken, refreshToken, nil
 }
 
-func (s *userService) Signup(email, password, fullName, role string) error {
-	existing, err := s.repo.GetByEmail(email)
+func (s *userService) SignUp(ctx context.Context, email, password, fullName, role string) error {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+
+	existing, err := s.repo.ReadByEmail(ctx, email)
 	if err != nil {
 		return err
 	}
@@ -75,5 +85,37 @@ func (s *userService) Signup(email, password, fullName, role string) error {
 		Role:     role,
 	}
 
-	return s.repo.Create(&user)
+	return s.repo.Create(ctx, &user)
+}
+
+func (s *userService) ReedById(ctx context.Context, id string) (*entities.User, error) {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+
+	user, err := s.repo.ReadByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (s *userService) UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error) {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+
+	var err error
+	if user.Password != "" {
+		user.Password, user.Salt, err = s.encrypt.HashPassword(user.Password)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	updatedUser, err := s.repo.UpdateUser(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedUser, nil
 }

@@ -7,6 +7,8 @@ option go_package = "proto/userservicepb";
 service UserService {
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc SignUp(SignUpRequest) returns (SignUpResponse);
+  rpc ReadUser(ReadUserRequest) returns (ReadUserResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
 }
 
 message LoginRequest {
@@ -29,4 +31,27 @@ message SignUpRequest{
 
 message SignUpResponse{
   string error = 2;
+}
+
+message ReadUserRequest{
+  string id = 1;
+}
+
+message ReadUserResponse{
+  string email = 1;
+  string full_name = 2;
+  string error = 3;
+}
+
+message UpdateUserRequest{
+  string id = 1;
+  optional string email = 2;
+  optional string password = 3;
+  optional string full_name = 4;
+}
+
+message UpdateUserResponse{
+  string email = 1;
+  string full_name = 2;
+  string error = 3;
 }
