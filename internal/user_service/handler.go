@@ -55,20 +55,11 @@ func (h *UserHandler) ReadUser(ctx context.Context, req *userservicepb.ReadUserR
 }
 
 func (h *UserHandler) UpdateUser(ctx context.Context, req *userservicepb.UpdateUserRequest) (*userservicepb.UpdateUserResponse, error) {
-	user := entities.User{
-		Id: req.Id,
-	}
-	if req.Email != nil {
-		user.Email = *req.Email
-	}
-	if req.FullName != nil {
-		user.FullName = *req.FullName
-	}
-	if req.Password != nil {
-		user.Password = *req.Password
-	}
-
-	updatedUser, err := h.service.UpdateUser(ctx, &user)
+	updatedUser, err := h.service.UpdateUser(ctx, &entities.User{
+		Id:       req.Id,
+		Email:    req.Email,
+		FullName: req.FullName,
+	})
 	if err != nil {
 		return &userservicepb.UpdateUserResponse{Error: err.Error()}, nil
 	}
@@ -77,4 +68,16 @@ func (h *UserHandler) UpdateUser(ctx context.Context, req *userservicepb.UpdateU
 		Email:    updatedUser.Email,
 		FullName: updatedUser.FullName,
 	}, nil
+}
+
+func (h *UserHandler) ChangePassword(ctx context.Context, req *userservicepb.ChangePasswordRequest) (*userservicepb.ChangePasswordResponse, error) {
+	err := h.service.UpdatePassword(ctx, &entities.User{
+		Id:       req.Id,
+		Password: req.Password,
+	})
+	if err != nil {
+		return &userservicepb.ChangePasswordResponse{Error: err.Error()}, nil
+	}
+
+	return &userservicepb.ChangePasswordResponse{}, nil
 }

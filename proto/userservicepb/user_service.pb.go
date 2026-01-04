@@ -352,9 +352,8 @@ func (x *ReadUserResponse) GetError() string {
 type UpdateUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Email         *string                `protobuf:"bytes,2,opt,name=email,proto3,oneof" json:"email,omitempty"`
-	Password      *string                `protobuf:"bytes,3,opt,name=password,proto3,oneof" json:"password,omitempty"`
-	FullName      *string                `protobuf:"bytes,4,opt,name=full_name,json=fullName,proto3,oneof" json:"full_name,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	FullName      string                 `protobuf:"bytes,4,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -397,22 +396,15 @@ func (x *UpdateUserRequest) GetId() string {
 }
 
 func (x *UpdateUserRequest) GetEmail() string {
-	if x != nil && x.Email != nil {
-		return *x.Email
-	}
-	return ""
-}
-
-func (x *UpdateUserRequest) GetPassword() string {
-	if x != nil && x.Password != nil {
-		return *x.Password
+	if x != nil {
+		return x.Email
 	}
 	return ""
 }
 
 func (x *UpdateUserRequest) GetFullName() string {
-	if x != nil && x.FullName != nil {
-		return *x.FullName
+	if x != nil {
+		return x.FullName
 	}
 	return ""
 }
@@ -477,6 +469,102 @@ func (x *UpdateUserResponse) GetError() string {
 	return ""
 }
 
+type ChangePasswordRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChangePasswordRequest) Reset() {
+	*x = ChangePasswordRequest{}
+	mi := &file_proto_user_service_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChangePasswordRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangePasswordRequest) ProtoMessage() {}
+
+func (x *ChangePasswordRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_service_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangePasswordRequest.ProtoReflect.Descriptor instead.
+func (*ChangePasswordRequest) Descriptor() ([]byte, []int) {
+	return file_proto_user_service_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ChangePasswordRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ChangePasswordRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+type ChangePasswordResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Error         string                 `protobuf:"bytes,1,opt,name=error,proto3" json:"error,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChangePasswordResponse) Reset() {
+	*x = ChangePasswordResponse{}
+	mi := &file_proto_user_service_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChangePasswordResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangePasswordResponse) ProtoMessage() {}
+
+func (x *ChangePasswordResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_service_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangePasswordResponse.ProtoReflect.Descriptor instead.
+func (*ChangePasswordResponse) Descriptor() ([]byte, []int) {
+	return file_proto_user_service_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ChangePasswordResponse) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
 var File_proto_user_service_proto protoreflect.FileDescriptor
 
 const file_proto_user_service_proto_rawDesc = "" +
@@ -501,26 +589,27 @@ const file_proto_user_service_proto_rawDesc = "" +
 	"\x10ReadUserResponse\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1b\n" +
 	"\tfull_name\x18\x02 \x01(\tR\bfullName\x12\x14\n" +
-	"\x05error\x18\x03 \x01(\tR\x05error\"\xa6\x01\n" +
+	"\x05error\x18\x03 \x01(\tR\x05error\"V\n" +
 	"\x11UpdateUserRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
-	"\x05email\x18\x02 \x01(\tH\x00R\x05email\x88\x01\x01\x12\x1f\n" +
-	"\bpassword\x18\x03 \x01(\tH\x01R\bpassword\x88\x01\x01\x12 \n" +
-	"\tfull_name\x18\x04 \x01(\tH\x02R\bfullName\x88\x01\x01B\b\n" +
-	"\x06_emailB\v\n" +
-	"\t_passwordB\f\n" +
-	"\n" +
-	"_full_name\"]\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1b\n" +
+	"\tfull_name\x18\x04 \x01(\tR\bfullName\"]\n" +
 	"\x12UpdateUserResponse\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1b\n" +
 	"\tfull_name\x18\x02 \x01(\tR\bfullName\x12\x14\n" +
-	"\x05error\x18\x03 \x01(\tR\x05error2\xa8\x02\n" +
+	"\x05error\x18\x03 \x01(\tR\x05error\"C\n" +
+	"\x15ChangePasswordRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\".\n" +
+	"\x16ChangePasswordResponse\x12\x14\n" +
+	"\x05error\x18\x01 \x01(\tR\x05error2\x83\x03\n" +
 	"\vUserService\x12>\n" +
 	"\x05Login\x12\x19.userservice.LoginRequest\x1a\x1a.userservice.LoginResponse\x12A\n" +
 	"\x06SignUp\x12\x1a.userservice.SignUpRequest\x1a\x1b.userservice.SignUpResponse\x12G\n" +
 	"\bReadUser\x12\x1c.userservice.ReadUserRequest\x1a\x1d.userservice.ReadUserResponse\x12M\n" +
 	"\n" +
-	"UpdateUser\x12\x1e.userservice.UpdateUserRequest\x1a\x1f.userservice.UpdateUserResponseB\x15Z\x13proto/userservicepbb\x06proto3"
+	"UpdateUser\x12\x1e.userservice.UpdateUserRequest\x1a\x1f.userservice.UpdateUserResponse\x12Y\n" +
+	"\x0eChangePassword\x12\".userservice.ChangePasswordRequest\x1a#.userservice.ChangePasswordResponseB\x15Z\x13proto/userservicepbb\x06proto3"
 
 var (
 	file_proto_user_service_proto_rawDescOnce sync.Once
@@ -534,28 +623,32 @@ func file_proto_user_service_proto_rawDescGZIP() []byte {
 	return file_proto_user_service_proto_rawDescData
 }
 
-var file_proto_user_service_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_proto_user_service_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_proto_user_service_proto_goTypes = []any{
-	(*LoginRequest)(nil),       // 0: userservice.LoginRequest
-	(*LoginResponse)(nil),      // 1: userservice.LoginResponse
-	(*SignUpRequest)(nil),      // 2: userservice.SignUpRequest
-	(*SignUpResponse)(nil),     // 3: userservice.SignUpResponse
-	(*ReadUserRequest)(nil),    // 4: userservice.ReadUserRequest
-	(*ReadUserResponse)(nil),   // 5: userservice.ReadUserResponse
-	(*UpdateUserRequest)(nil),  // 6: userservice.UpdateUserRequest
-	(*UpdateUserResponse)(nil), // 7: userservice.UpdateUserResponse
+	(*LoginRequest)(nil),           // 0: userservice.LoginRequest
+	(*LoginResponse)(nil),          // 1: userservice.LoginResponse
+	(*SignUpRequest)(nil),          // 2: userservice.SignUpRequest
+	(*SignUpResponse)(nil),         // 3: userservice.SignUpResponse
+	(*ReadUserRequest)(nil),        // 4: userservice.ReadUserRequest
+	(*ReadUserResponse)(nil),       // 5: userservice.ReadUserResponse
+	(*UpdateUserRequest)(nil),      // 6: userservice.UpdateUserRequest
+	(*UpdateUserResponse)(nil),     // 7: userservice.UpdateUserResponse
+	(*ChangePasswordRequest)(nil),  // 8: userservice.ChangePasswordRequest
+	(*ChangePasswordResponse)(nil), // 9: userservice.ChangePasswordResponse
 }
 var file_proto_user_service_proto_depIdxs = []int32{
 	0, // 0: userservice.UserService.Login:input_type -> userservice.LoginRequest
 	2, // 1: userservice.UserService.SignUp:input_type -> userservice.SignUpRequest
 	4, // 2: userservice.UserService.ReadUser:input_type -> userservice.ReadUserRequest
 	6, // 3: userservice.UserService.UpdateUser:input_type -> userservice.UpdateUserRequest
-	1, // 4: userservice.UserService.Login:output_type -> userservice.LoginResponse
-	3, // 5: userservice.UserService.SignUp:output_type -> userservice.SignUpResponse
-	5, // 6: userservice.UserService.ReadUser:output_type -> userservice.ReadUserResponse
-	7, // 7: userservice.UserService.UpdateUser:output_type -> userservice.UpdateUserResponse
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
+	8, // 4: userservice.UserService.ChangePassword:input_type -> userservice.ChangePasswordRequest
+	1, // 5: userservice.UserService.Login:output_type -> userservice.LoginResponse
+	3, // 6: userservice.UserService.SignUp:output_type -> userservice.SignUpResponse
+	5, // 7: userservice.UserService.ReadUser:output_type -> userservice.ReadUserResponse
+	7, // 8: userservice.UserService.UpdateUser:output_type -> userservice.UpdateUserResponse
+	9, // 9: userservice.UserService.ChangePassword:output_type -> userservice.ChangePasswordResponse
+	5, // [5:10] is the sub-list for method output_type
+	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -566,14 +659,13 @@ func file_proto_user_service_proto_init() {
 	if File_proto_user_service_proto != nil {
 		return
 	}
-	file_proto_user_service_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_user_service_proto_rawDesc), len(file_proto_user_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

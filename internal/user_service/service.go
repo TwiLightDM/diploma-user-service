@@ -14,6 +14,7 @@ type UserService interface {
 	SignUp(ctx context.Context, email, password, fullName, role string) error
 	ReedById(ctx context.Context, id string) (*entities.User, error)
 	UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error)
+	UpdatePassword(ctx context.Context, user *entities.User) error
 }
 
 type userService struct {
@@ -118,4 +119,24 @@ func (s *userService) UpdateUser(ctx context.Context, user *entities.User) (*ent
 	}
 
 	return updatedUser, nil
+}
+
+func (s *userService) UpdatePassword(ctx context.Context, user *entities.User) error {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+
+	var err error
+	if user.Password != "" {
+		user.Password, user.Salt, err = s.encrypt.HashPassword(user.Password)
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err = s.repo.UpdateUser(ctx, user)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

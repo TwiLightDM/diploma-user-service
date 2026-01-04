@@ -43,7 +43,8 @@ func (r *userRepository) ReadByID(ctx context.Context, id string) (*entities.Use
 	var user entities.User
 	if err := r.db.
 		WithContext(ctx).
-		First(&user, id).Error; err != nil {
+		Where("id = ?", id).
+		First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}

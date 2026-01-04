@@ -9,6 +9,7 @@ service UserService {
   rpc SignUp(SignUpRequest) returns (SignUpResponse);
   rpc ReadUser(ReadUserRequest) returns (ReadUserResponse);
   rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
 }
 
 message LoginRequest {
@@ -45,13 +46,21 @@ message ReadUserResponse{
 
 message UpdateUserRequest{
   string id = 1;
-  optional string email = 2;
-  optional string password = 3;
-  optional string full_name = 4;
+  string email = 2;
+  string full_name = 4;
 }
 
 message UpdateUserResponse{
   string email = 1;
   string full_name = 2;
   string error = 3;
+}
+
+message ChangePasswordRequest{
+  string id = 1;
+  string password = 2;
+}
+
+message ChangePasswordResponse{
+  string error = 1;
 }
