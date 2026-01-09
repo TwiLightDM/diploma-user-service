@@ -20,7 +20,6 @@ message LoginRequest {
 message LoginResponse {
   string access_token = 1;
   string refresh_token = 2;
-  string error = 3;
 }
 
 message SignUpRequest{
@@ -31,7 +30,6 @@ message SignUpRequest{
 }
 
 message SignUpResponse{
-  string error = 2;
 }
 
 message ReadUserRequest{
@@ -41,7 +39,6 @@ message ReadUserRequest{
 message ReadUserResponse{
   string email = 1;
   string full_name = 2;
-  string error = 3;
 }
 
 message UpdateUserRequest{
@@ -53,7 +50,6 @@ message UpdateUserRequest{
 message UpdateUserResponse{
   string email = 1;
   string full_name = 2;
-  string error = 3;
 }
 
 message ChangePasswordRequest{
@@ -62,5 +58,4 @@ message ChangePasswordRequest{
 }
 
 message ChangePasswordResponse{
-  string error = 1;
 }

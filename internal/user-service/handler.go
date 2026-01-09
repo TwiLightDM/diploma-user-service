@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/TwiLightDM/diploma-user-service/internal/entities"
 	"github.com/TwiLightDM/diploma-user-service/proto/userservicepb"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type UserHandler struct {
@@ -18,9 +20,7 @@ func NewUserHandler(service UserService) *UserHandler {
 func (h *UserHandler) Login(ctx context.Context, req *userservicepb.LoginRequest) (*userservicepb.LoginResponse, error) {
 	access, refresh, err := h.service.Login(ctx, req.Email, req.Password)
 	if err != nil {
-		return &userservicepb.LoginResponse{
-			Error: err.Error(),
-		}, nil
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &userservicepb.LoginResponse{
@@ -32,9 +32,7 @@ func (h *UserHandler) Login(ctx context.Context, req *userservicepb.LoginRequest
 func (h *UserHandler) SignUp(ctx context.Context, req *userservicepb.SignUpRequest) (*userservicepb.SignUpResponse, error) {
 	err := h.service.SignUp(ctx, req.Email, req.Password, req.FullName, req.Role)
 	if err != nil {
-		return &userservicepb.SignUpResponse{
-			Error: err.Error(),
-		}, nil
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &userservicepb.SignUpResponse{}, nil
@@ -43,9 +41,7 @@ func (h *UserHandler) SignUp(ctx context.Context, req *userservicepb.SignUpReque
 func (h *UserHandler) ReadUser(ctx context.Context, req *userservicepb.ReadUserRequest) (*userservicepb.ReadUserResponse, error) {
 	user, err := h.service.ReedById(ctx, req.Id)
 	if err != nil {
-		return &userservicepb.ReadUserResponse{
-			Error: err.Error(),
-		}, nil
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &userservicepb.ReadUserResponse{
@@ -61,7 +57,7 @@ func (h *UserHandler) UpdateUser(ctx context.Context, req *userservicepb.UpdateU
 		FullName: req.FullName,
 	})
 	if err != nil {
-		return &userservicepb.UpdateUserResponse{Error: err.Error()}, nil
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &userservicepb.UpdateUserResponse{
@@ -76,7 +72,7 @@ func (h *UserHandler) ChangePassword(ctx context.Context, req *userservicepb.Cha
 		Password: req.Password,
 	})
 	if err != nil {
-		return &userservicepb.ChangePasswordResponse{Error: err.Error()}, nil
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &userservicepb.ChangePasswordResponse{}, nil

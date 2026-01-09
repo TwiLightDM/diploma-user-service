@@ -1,12 +1,11 @@
 package config
 
 import (
+	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"strconv"
 	"time"
-
-	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -31,7 +30,7 @@ type Config struct {
 
 func Load() *Config {
 	if err := godotenv.Load(); err != nil {
-		log.Fatal(".env file not found")
+		log.Fatal(".env file didn't found")
 	}
 
 	cfg := &Config{}

@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.32.0
-// source: proto/user_service.proto
+// source: proto/user-service.proto
 
 package userservicepb
 
@@ -569,7 +569,7 @@ var File_proto_user_service_proto protoreflect.FileDescriptor
 
 const file_proto_user_service_proto_rawDesc = "" +
 	"\n" +
-	"\x18proto/user_service.proto\x12\vuserservice\"@\n" +
+	"\x18proto/user-service.proto\x12\vuserservice\"@\n" +
 	"\fLoginRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"m\n" +

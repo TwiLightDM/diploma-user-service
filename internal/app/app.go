@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/TwiLightDM/diploma-user-service/internal/config"
-	"github.com/TwiLightDM/diploma-user-service/internal/user_service"
+	"github.com/TwiLightDM/diploma-user-service/internal/user-service"
 	"github.com/TwiLightDM/diploma-user-service/package/databases"
 	"github.com/TwiLightDM/diploma-user-service/package/utils"
 	"github.com/TwiLightDM/diploma-user-service/proto/userservicepb"

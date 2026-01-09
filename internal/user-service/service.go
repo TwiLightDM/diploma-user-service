@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/TwiLightDM/diploma-user-service/internal/entities"
 	"github.com/TwiLightDM/diploma-user-service/package/utils"
+	"github.com/TwiLightDM/diploma-user-service/package/validation"
 	"github.com/google/uuid"
 	"time"
 )
@@ -72,6 +73,16 @@ func (s *userService) SignUp(ctx context.Context, email, password, fullName, rol
 		return errors.New("user already exists")
 	}
 
+	ok := validation.IsValidEmail(email)
+	if !ok {
+		return errors.New("invalid email")
+	}
+
+	ok = validation.IsStrongPassword(password)
+	if !ok {
+		return errors.New("invalid password")
+	}
+
 	hashedPassword, salt, err := s.encrypt.HashPassword(password)
 	if err != nil {
 		return err
@@ -106,12 +117,6 @@ func (s *userService) UpdateUser(ctx context.Context, user *entities.User) (*ent
 	defer cancel()
 
 	var err error
-	if user.Password != "" {
-		user.Password, user.Salt, err = s.encrypt.HashPassword(user.Password)
-		if err != nil {
-			return nil, err
-		}
-	}
 
 	updatedUser, err := s.repo.UpdateUser(ctx, user)
 	if err != nil {
@@ -126,11 +131,15 @@ func (s *userService) UpdatePassword(ctx context.Context, user *entities.User) e
 	defer cancel()
 
 	var err error
-	if user.Password != "" {
-		user.Password, user.Salt, err = s.encrypt.HashPassword(user.Password)
-		if err != nil {
-			return err
-		}
+
+	ok := validation.IsStrongPassword(user.Password)
+	if !ok {
+		return errors.New("invalid password")
+	}
+
+	user.Password, user.Salt, err = s.encrypt.HashPassword(user.Password)
+	if err != nil {
+		return err
 	}
 
 	_, err = s.repo.UpdateUser(ctx, user)
