@@ -10,8 +10,8 @@ import (
 type UserRepository interface {
 	Create(ctx context.Context, user *entities.User) error
 	ReadByEmail(ctx context.Context, email string) (*entities.User, error)
-	ReadByID(ctx context.Context, id string) (*entities.User, error)
-	UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error)
+	ReadById(ctx context.Context, id string) (*entities.User, error)
+	Update(ctx context.Context, user *entities.User) (*entities.User, error)
 }
 
 type userRepository struct {
@@ -39,7 +39,7 @@ func (r *userRepository) ReadByEmail(ctx context.Context, email string) (*entiti
 	return &user, nil
 }
 
-func (r *userRepository) ReadByID(ctx context.Context, id string) (*entities.User, error) {
+func (r *userRepository) ReadById(ctx context.Context, id string) (*entities.User, error) {
 	var user entities.User
 	if err := r.db.
 		WithContext(ctx).
@@ -53,7 +53,7 @@ func (r *userRepository) ReadByID(ctx context.Context, id string) (*entities.Use
 	return &user, nil
 }
 
-func (r *userRepository) UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error) {
+func (r *userRepository) Update(ctx context.Context, user *entities.User) (*entities.User, error) {
 	var updatedUser entities.User
 	err := r.db.
 		WithContext(ctx).

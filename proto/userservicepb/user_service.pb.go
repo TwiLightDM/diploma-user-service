@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.32.0
-// source: proto/user-service.proto
+// source: proto/user_service.proto
 
 package userservicepb
 
@@ -77,7 +77,6 @@ type LoginResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
 	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
-	Error         string                 `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -122,13 +121,6 @@ func (x *LoginResponse) GetAccessToken() string {
 func (x *LoginResponse) GetRefreshToken() string {
 	if x != nil {
 		return x.RefreshToken
-	}
-	return ""
-}
-
-func (x *LoginResponse) GetError() string {
-	if x != nil {
-		return x.Error
 	}
 	return ""
 }
@@ -203,7 +195,6 @@ func (x *SignUpRequest) GetPassword() string {
 
 type SignUpResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Error         string                 `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -236,13 +227,6 @@ func (x *SignUpResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use SignUpResponse.ProtoReflect.Descriptor instead.
 func (*SignUpResponse) Descriptor() ([]byte, []int) {
 	return file_proto_user_service_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *SignUpResponse) GetError() string {
-	if x != nil {
-		return x.Error
-	}
-	return ""
 }
 
 type ReadUserRequest struct {
@@ -293,7 +277,6 @@ type ReadUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	FullName      string                 `protobuf:"bytes,2,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	Error         string                 `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -338,13 +321,6 @@ func (x *ReadUserResponse) GetEmail() string {
 func (x *ReadUserResponse) GetFullName() string {
 	if x != nil {
 		return x.FullName
-	}
-	return ""
-}
-
-func (x *ReadUserResponse) GetError() string {
-	if x != nil {
-		return x.Error
 	}
 	return ""
 }
@@ -413,7 +389,6 @@ type UpdateUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	FullName      string                 `protobuf:"bytes,2,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	Error         string                 `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -458,13 +433,6 @@ func (x *UpdateUserResponse) GetEmail() string {
 func (x *UpdateUserResponse) GetFullName() string {
 	if x != nil {
 		return x.FullName
-	}
-	return ""
-}
-
-func (x *UpdateUserResponse) GetError() string {
-	if x != nil {
-		return x.Error
 	}
 	return ""
 }
@@ -523,7 +491,6 @@ func (x *ChangePasswordRequest) GetPassword() string {
 
 type ChangePasswordResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Error         string                 `protobuf:"bytes,1,opt,name=error,proto3" json:"error,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -558,51 +525,39 @@ func (*ChangePasswordResponse) Descriptor() ([]byte, []int) {
 	return file_proto_user_service_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *ChangePasswordResponse) GetError() string {
-	if x != nil {
-		return x.Error
-	}
-	return ""
-}
-
 var File_proto_user_service_proto protoreflect.FileDescriptor
 
 const file_proto_user_service_proto_rawDesc = "" +
 	"\n" +
-	"\x18proto/user-service.proto\x12\vuserservice\"@\n" +
+	"\x18proto/user_service.proto\x12\vuserservice\"@\n" +
 	"\fLoginRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"m\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"W\n" +
 	"\rLoginResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12\x14\n" +
-	"\x05error\x18\x03 \x01(\tR\x05error\"r\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"r\n" +
 	"\rSignUpRequest\x12\x1b\n" +
 	"\tfull_name\x18\x01 \x01(\tR\bfullName\x12\x12\n" +
 	"\x04role\x18\x02 \x01(\tR\x04role\x12\x14\n" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x04 \x01(\tR\bpassword\"&\n" +
-	"\x0eSignUpResponse\x12\x14\n" +
-	"\x05error\x18\x02 \x01(\tR\x05error\"!\n" +
+	"\bpassword\x18\x04 \x01(\tR\bpassword\"\x10\n" +
+	"\x0eSignUpResponse\"!\n" +
 	"\x0fReadUserRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"[\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"E\n" +
 	"\x10ReadUserResponse\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1b\n" +
-	"\tfull_name\x18\x02 \x01(\tR\bfullName\x12\x14\n" +
-	"\x05error\x18\x03 \x01(\tR\x05error\"V\n" +
+	"\tfull_name\x18\x02 \x01(\tR\bfullName\"V\n" +
 	"\x11UpdateUserRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1b\n" +
-	"\tfull_name\x18\x04 \x01(\tR\bfullName\"]\n" +
+	"\tfull_name\x18\x04 \x01(\tR\bfullName\"G\n" +
 	"\x12UpdateUserResponse\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1b\n" +
-	"\tfull_name\x18\x02 \x01(\tR\bfullName\x12\x14\n" +
-	"\x05error\x18\x03 \x01(\tR\x05error\"C\n" +
+	"\tfull_name\x18\x02 \x01(\tR\bfullName\"C\n" +
 	"\x15ChangePasswordRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\".\n" +
-	"\x16ChangePasswordResponse\x12\x14\n" +
-	"\x05error\x18\x01 \x01(\tR\x05error2\x83\x03\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x18\n" +
+	"\x16ChangePasswordResponse2\x83\x03\n" +
 	"\vUserService\x12>\n" +
 	"\x05Login\x12\x19.userservice.LoginRequest\x1a\x1a.userservice.LoginResponse\x12A\n" +
 	"\x06SignUp\x12\x1a.userservice.SignUpRequest\x1a\x1b.userservice.SignUpResponse\x12G\n" +

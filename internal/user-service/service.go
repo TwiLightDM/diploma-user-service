@@ -104,7 +104,7 @@ func (s *userService) ReedById(ctx context.Context, id string) (*entities.User, 
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
 
-	user, err := s.repo.ReadByID(ctx, id)
+	user, err := s.repo.ReadById(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +118,7 @@ func (s *userService) UpdateUser(ctx context.Context, user *entities.User) (*ent
 
 	var err error
 
-	updatedUser, err := s.repo.UpdateUser(ctx, user)
+	updatedUser, err := s.repo.Update(ctx, user)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +142,7 @@ func (s *userService) UpdatePassword(ctx context.Context, user *entities.User) e
 		return err
 	}
 
-	_, err = s.repo.UpdateUser(ctx, user)
+	_, err = s.repo.Update(ctx, user)
 	if err != nil {
 		return err
 	}
