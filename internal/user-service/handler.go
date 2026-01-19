@@ -2,6 +2,7 @@ package user_service
 
 import (
 	"context"
+	"fmt"
 	"github.com/TwiLightDM/diploma-user-service/internal/entities"
 	"github.com/TwiLightDM/diploma-user-service/proto/userservicepb"
 	"google.golang.org/grpc/codes"
@@ -32,7 +33,15 @@ func (h *UserHandler) Login(ctx context.Context, req *userservicepb.LoginRequest
 func (h *UserHandler) SignUp(ctx context.Context, req *userservicepb.SignUpRequest) (*userservicepb.SignUpResponse, error) {
 	err := h.service.SignUp(ctx, req.Email, req.Password, req.FullName, req.Role)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		st, ok := status.FromError(err)
+		if !ok {
+			return nil, err
+		}
+
+		switch st.Code() {
+		case codes.InvalidArgument:
+			fmt.Println(st.Message())
+		}
 	}
 
 	return &userservicepb.SignUpResponse{}, nil
