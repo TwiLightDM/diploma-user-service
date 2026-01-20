@@ -3,15 +3,15 @@ package user_service
 import (
 	"context"
 	"errors"
+	"time"
+
 	"github.com/TwiLightDM/diploma-user-service/internal/entities"
 	"github.com/TwiLightDM/diploma-user-service/package/utils"
-	"github.com/TwiLightDM/diploma-user-service/package/validation"
 	"github.com/google/uuid"
-	"time"
 )
 
 type UserService interface {
-	Login(ctx context.Context, email, password string) (string, string, error)
+	Login(ctx context.Context, email, password string) (string, *time.Time, string, *time.Time, error)
 	SignUp(ctx context.Context, email, password, fullName, role string) error
 	ReedById(ctx context.Context, id string) (*entities.User, error)
 	UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error)
@@ -19,46 +19,47 @@ type UserService interface {
 }
 
 type userService struct {
-	repo    UserRepository
-	jwt     *utils.JWTService
-	encrypt *utils.EncryptService
+	repo     UserRepository
+	validate utils.ValidationService
+	jwt      utils.JWTService
+	encrypt  utils.EncryptService
 }
 
-func NewUserService(repo UserRepository, jwt *utils.JWTService, encrypt *utils.EncryptService) UserService {
-	return &userService{repo: repo, jwt: jwt, encrypt: encrypt}
+func NewUserService(repo UserRepository, validate utils.ValidationService, jwt utils.JWTService, encrypt utils.EncryptService) UserService {
+	return &userService{repo: repo, validate: validate, jwt: jwt, encrypt: encrypt}
 }
 
-func (s *userService) Login(ctx context.Context, email, password string) (string, string, error) {
+func (s *userService) Login(ctx context.Context, email, password string) (string, *time.Time, string, *time.Time, error) {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
 
 	user, err := s.repo.ReadByEmail(ctx, email)
 	if err != nil {
-		return "", "", err
+		return "", nil, "", nil, err
 	}
 	if user == nil {
-		return "", "", errors.New("user not found")
+		return "", nil, "", nil, errors.New("user not found")
 	}
 
 	if err = s.encrypt.PasswordComparison(user.Password, password, user.Salt); err != nil {
-		return "", "", err
+		return "", nil, "", nil, err
 	}
 
 	data := make(map[string]any)
 	data["id"] = user.Id
 	data["role"] = user.Role
 
-	accessToken, err := s.jwt.GenerateAccessJWT(data)
+	accessToken, accessExpiresAt, err := s.jwt.GenerateAccessJWT(data)
 	if err != nil {
-		return "", "", err
+		return "", nil, "", nil, err
 	}
 
-	refreshToken, err := s.jwt.GenerateRefreshJWT(data)
+	refreshToken, refreshExpiresAt, err := s.jwt.GenerateRefreshJWT(data)
 	if err != nil {
-		return "", "", err
+		return "", nil, "", nil, err
 	}
 
-	return accessToken, refreshToken, nil
+	return accessToken, accessExpiresAt, refreshToken, refreshExpiresAt, nil
 }
 
 func (s *userService) SignUp(ctx context.Context, email, password, fullName, role string) error {
@@ -73,12 +74,12 @@ func (s *userService) SignUp(ctx context.Context, email, password, fullName, rol
 		return errors.New("user already exists")
 	}
 
-	ok := validation.IsValidEmail(email)
+	ok := s.validate.IsValidEmail(email)
 	if !ok {
 		return errors.New("invalid email")
 	}
 
-	ok = validation.IsStrongPassword(password)
+	ok = s.validate.IsStrongPassword(password)
 	if !ok {
 		return errors.New("invalid password")
 	}
@@ -132,7 +133,7 @@ func (s *userService) UpdatePassword(ctx context.Context, user *entities.User) e
 
 	var err error
 
-	ok := validation.IsStrongPassword(user.Password)
+	ok := s.validate.IsStrongPassword(user.Password)
 	if !ok {
 		return errors.New("invalid password")
 	}

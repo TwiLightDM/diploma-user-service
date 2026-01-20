@@ -4,20 +4,26 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
-type EncryptService struct {
+type EncryptService interface {
+	HashPassword(password string) (string, string, error)
+	PasswordComparison(hashedPassword, password, salt string) error
+}
+
+type encryptService struct {
 	SaltLength int
 }
 
-func NewEncryptionService(salt int) *EncryptService {
-	return &EncryptService{
+func NewEncryptionService(salt int) EncryptService {
+	return &encryptService{
 		SaltLength: salt,
 	}
 }
 
-func (e EncryptService) HashPassword(password string) (string, string, error) {
+func (e encryptService) HashPassword(password string) (string, string, error) {
 	salt, err := e.saltGeneration()
 	if err != nil {
 		return "", "", fmt.Errorf("failed to generate salt: %w", err)
@@ -29,7 +35,7 @@ func (e EncryptService) HashPassword(password string) (string, string, error) {
 	return string(hashedPassword), salt, nil
 }
 
-func (e EncryptService) PasswordComparison(hashedPassword, password, salt string) error {
+func (e encryptService) PasswordComparison(hashedPassword, password, salt string) error {
 	saltPassword := salt + password
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(saltPassword))
 	if err != nil {
@@ -38,7 +44,7 @@ func (e EncryptService) PasswordComparison(hashedPassword, password, salt string
 	return nil
 }
 
-func (e EncryptService) saltGeneration() (string, error) {
+func (e encryptService) saltGeneration() (string, error) {
 	bytes := make([]byte, e.SaltLength)
 	_, err := rand.Read(bytes)
 	if err != nil {

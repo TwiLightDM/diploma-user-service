@@ -3,10 +3,12 @@ package user_service
 import (
 	"context"
 	"fmt"
+
 	"github.com/TwiLightDM/diploma-user-service/internal/entities"
 	"github.com/TwiLightDM/diploma-user-service/proto/userservicepb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type UserHandler struct {
@@ -19,14 +21,16 @@ func NewUserHandler(service UserService) *UserHandler {
 }
 
 func (h *UserHandler) Login(ctx context.Context, req *userservicepb.LoginRequest) (*userservicepb.LoginResponse, error) {
-	access, refresh, err := h.service.Login(ctx, req.Email, req.Password)
+	accessToken, accessExpiresAt, refreshToken, RefreshExpiresAt, err := h.service.Login(ctx, req.Email, req.Password)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &userservicepb.LoginResponse{
-		AccessToken:  access,
-		RefreshToken: refresh,
+		AccessToken:      accessToken,
+		AccessExpiresAt:  timestamppb.New(*accessExpiresAt),
+		RefreshToken:     refreshToken,
+		RefreshExpiresAt: timestamppb.New(*RefreshExpiresAt),
 	}, nil
 }
 

@@ -1,4 +1,4 @@
-package validation
+package utils
 
 import (
 	"regexp"
@@ -11,11 +11,23 @@ var emailRegex = regexp.MustCompile(
 	`^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$`,
 )
 
-func IsValidEmail(email string) bool {
+type ValidationService interface {
+	IsValidEmail(email string) bool
+	IsStrongPassword(password string) bool
+}
+
+type validationService struct {
+}
+
+func NewValidationService() ValidationService {
+	return &validationService{}
+}
+
+func (v *validationService) IsValidEmail(email string) bool {
 	return emailRegex.MatchString(email)
 }
 
-func IsStrongPassword(password string) bool {
+func (v *validationService) IsStrongPassword(password string) bool {
 	if len(password) < MinPasswordSize {
 		return false
 	}
@@ -31,5 +43,6 @@ func IsStrongPassword(password string) bool {
 			hasDigit = true
 		}
 	}
+
 	return hasUpper && hasLower && hasDigit
 }

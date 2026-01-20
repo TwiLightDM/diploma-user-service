@@ -9,6 +9,7 @@ package userservicepb
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -74,11 +75,13 @@ func (x *LoginRequest) GetPassword() string {
 }
 
 type LoginResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	AccessToken      string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	AccessExpiresAt  *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=access_expires_at,json=accessExpiresAt,proto3" json:"access_expires_at,omitempty"`
+	RefreshToken     string                 `protobuf:"bytes,3,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	RefreshExpiresAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=refresh_expires_at,json=refreshExpiresAt,proto3" json:"refresh_expires_at,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *LoginResponse) Reset() {
@@ -118,11 +121,25 @@ func (x *LoginResponse) GetAccessToken() string {
 	return ""
 }
 
+func (x *LoginResponse) GetAccessExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.AccessExpiresAt
+	}
+	return nil
+}
+
 func (x *LoginResponse) GetRefreshToken() string {
 	if x != nil {
 		return x.RefreshToken
 	}
 	return ""
+}
+
+func (x *LoginResponse) GetRefreshExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.RefreshExpiresAt
+	}
+	return nil
 }
 
 type SignUpRequest struct {
@@ -529,13 +546,15 @@ var File_proto_user_service_proto protoreflect.FileDescriptor
 
 const file_proto_user_service_proto_rawDesc = "" +
 	"\n" +
-	"\x18proto/user_service.proto\x12\vuserservice\"@\n" +
+	"\x18proto/user_service.proto\x12\vuserservice\x1a\x1fgoogle/protobuf/timestamp.proto\"@\n" +
 	"\fLoginRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"W\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"\xe9\x01\n" +
 	"\rLoginResponse\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"r\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12F\n" +
+	"\x11access_expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x0faccessExpiresAt\x12#\n" +
+	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\x12H\n" +
+	"\x12refresh_expires_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x10refreshExpiresAt\"r\n" +
 	"\rSignUpRequest\x12\x1b\n" +
 	"\tfull_name\x18\x01 \x01(\tR\bfullName\x12\x12\n" +
 	"\x04role\x18\x02 \x01(\tR\x04role\x12\x14\n" +
@@ -590,23 +609,26 @@ var file_proto_user_service_proto_goTypes = []any{
 	(*UpdateUserResponse)(nil),     // 7: userservice.UpdateUserResponse
 	(*ChangePasswordRequest)(nil),  // 8: userservice.ChangePasswordRequest
 	(*ChangePasswordResponse)(nil), // 9: userservice.ChangePasswordResponse
+	(*timestamppb.Timestamp)(nil),  // 10: google.protobuf.Timestamp
 }
 var file_proto_user_service_proto_depIdxs = []int32{
-	0, // 0: userservice.UserService.Login:input_type -> userservice.LoginRequest
-	2, // 1: userservice.UserService.SignUp:input_type -> userservice.SignUpRequest
-	4, // 2: userservice.UserService.ReadUser:input_type -> userservice.ReadUserRequest
-	6, // 3: userservice.UserService.UpdateUser:input_type -> userservice.UpdateUserRequest
-	8, // 4: userservice.UserService.ChangePassword:input_type -> userservice.ChangePasswordRequest
-	1, // 5: userservice.UserService.Login:output_type -> userservice.LoginResponse
-	3, // 6: userservice.UserService.SignUp:output_type -> userservice.SignUpResponse
-	5, // 7: userservice.UserService.ReadUser:output_type -> userservice.ReadUserResponse
-	7, // 8: userservice.UserService.UpdateUser:output_type -> userservice.UpdateUserResponse
-	9, // 9: userservice.UserService.ChangePassword:output_type -> userservice.ChangePasswordResponse
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	10, // 0: userservice.LoginResponse.access_expires_at:type_name -> google.protobuf.Timestamp
+	10, // 1: userservice.LoginResponse.refresh_expires_at:type_name -> google.protobuf.Timestamp
+	0,  // 2: userservice.UserService.Login:input_type -> userservice.LoginRequest
+	2,  // 3: userservice.UserService.SignUp:input_type -> userservice.SignUpRequest
+	4,  // 4: userservice.UserService.ReadUser:input_type -> userservice.ReadUserRequest
+	6,  // 5: userservice.UserService.UpdateUser:input_type -> userservice.UpdateUserRequest
+	8,  // 6: userservice.UserService.ChangePassword:input_type -> userservice.ChangePasswordRequest
+	1,  // 7: userservice.UserService.Login:output_type -> userservice.LoginResponse
+	3,  // 8: userservice.UserService.SignUp:output_type -> userservice.SignUpResponse
+	5,  // 9: userservice.UserService.ReadUser:output_type -> userservice.ReadUserResponse
+	7,  // 10: userservice.UserService.UpdateUser:output_type -> userservice.UpdateUserResponse
+	9,  // 11: userservice.UserService.ChangePassword:output_type -> userservice.ChangePasswordResponse
+	7,  // [7:12] is the sub-list for method output_type
+	2,  // [2:7] is the sub-list for method input_type
+	2,  // [2:2] is the sub-list for extension type_name
+	2,  // [2:2] is the sub-list for extension extendee
+	0,  // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_proto_user_service_proto_init() }

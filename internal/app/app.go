@@ -28,6 +28,7 @@ func Run(cfg *config.Config) error {
 		return err
 	}
 
+	validationService := utils.NewValidationService()
 	encryptionService := utils.NewEncryptionService(cfg.SaltLength)
 	jwtService := utils.NewJWTService(
 		cfg.JWT.Secret,
@@ -38,6 +39,7 @@ func Run(cfg *config.Config) error {
 	userRepo := user_service.NewUserRepository(db)
 	userService := user_service.NewUserService(
 		userRepo,
+		validationService,
 		jwtService,
 		encryptionService,
 	)

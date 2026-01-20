@@ -2,27 +2,33 @@ package utils
 
 import (
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
-type JWTService struct {
+type JWTService interface {
+	GenerateRefreshJWT(data map[string]any) (string, *time.Time, error)
+	GenerateAccessJWT(data map[string]any) (string, *time.Time, error)
+}
+
+type jwtService struct {
 	Key             string
 	AccessDuration  time.Duration
 	RefreshDuration time.Duration
 }
 
-func NewJWTService(key string, accessDuration, refreshDuration time.Duration) *JWTService {
-	return &JWTService{
+func NewJWTService(key string, accessDuration, refreshDuration time.Duration) JWTService {
+	return &jwtService{
 		Key:             key,
 		AccessDuration:  accessDuration,
 		RefreshDuration: refreshDuration,
 	}
 }
 
-func (s *JWTService) generateJWT(data map[string]any, expiration int64) (string, error) {
+func (s *jwtService) generateJWT(data map[string]any, expiresAt *time.Time) (string, *time.Time, error) {
 	claims := jwt.MapClaims{
-		"exp": expiration,
+		"exp": expiresAt.Unix(),
 	}
 
 	for key, value := range data {
@@ -37,21 +43,22 @@ func (s *JWTService) generateJWT(data map[string]any, expiration int64) (string,
 
 	signedToken, err := token.SignedString([]byte(s.Key))
 	if err != nil {
-		return "", fmt.Errorf("failed to sign token: %w", err)
+		return "", nil, fmt.Errorf("failed to sign token: %w", err)
 	}
 
-	return signedToken, nil
+	return signedToken, expiresAt, nil
 }
 
-func (s *JWTService) GenerateRefreshJWT(data map[string]any) (string, error) {
-	expiration := time.Now().Add(s.RefreshDuration).Unix()
+func (s *jwtService) GenerateRefreshJWT(data map[string]any) (string, *time.Time, error) {
+	expiresAt := time.Now().Add(s.RefreshDuration)
 	delete(data, "exp")
-	return s.generateJWT(data, expiration)
 
+	return s.generateJWT(data, &expiresAt)
 }
 
-func (s *JWTService) GenerateAccessJWT(data map[string]any) (string, error) {
-	expiration := time.Now().Add(s.AccessDuration).Unix()
+func (s *jwtService) GenerateAccessJWT(data map[string]any) (string, *time.Time, error) {
+	expiresAt := time.Now().Add(s.AccessDuration)
 	delete(data, "exp")
-	return s.generateJWT(data, expiration)
+
+	return s.generateJWT(data, &expiresAt)
 }

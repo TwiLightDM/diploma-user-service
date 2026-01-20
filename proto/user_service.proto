@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package userservice;
 
+import "google/protobuf/timestamp.proto";
+
 option go_package = "proto/userservicepb";
 
 service UserService {
@@ -19,7 +21,9 @@ message LoginRequest {
 
 message LoginResponse {
   string access_token = 1;
-  string refresh_token = 2;
+  google.protobuf.Timestamp access_expires_at = 2;
+  string refresh_token = 3;
+  google.protobuf.Timestamp refresh_expires_at = 4;
 }
 
 message SignUpRequest{
