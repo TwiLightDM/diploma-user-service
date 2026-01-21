@@ -3,6 +3,7 @@ package user_service
 import (
 	"context"
 	"errors"
+
 	"github.com/TwiLightDM/diploma-user-service/internal/entities"
 	"gorm.io/gorm"
 )

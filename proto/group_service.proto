@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package groupservice;
+
+option go_package = "proto/groupservicepb";
+
+service GroupService {
+  rpc CreateGroup(CreateGroupRequest) returns (CreateGroupResponse);
+  rpc ReadGroup(ReadGroupRequest) returns (ReadGroupResponse);
+  rpc ReadAllGroupsByOwnerId(ReadAllGroupsByOwnerIdRequest) returns (ReadAllGroupsByOwnerIdResponse);
+  rpc UpdateGroup(UpdateGroupRequest) returns (UpdateGroupResponse);
+  rpc DeleteGroup(DeleteGroupRequest) returns (DeleteGroupResponse);
+}
+
+message Group{
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string owner_id = 4;
+}
+
+message CreateGroupRequest{
+  string title = 1;
+  string description = 2;
+  string owner_id = 3;
+}
+
+message CreateGroupResponse{
+  Group group = 1;
+}
+
+message ReadGroupRequest{
+  string id = 1;
+}
+
+message ReadGroupResponse{
+  Group group = 1;
+}
+
+message ReadAllGroupsByOwnerIdRequest{
+  string owner_id = 1;
+}
+
+message ReadAllGroupsByOwnerIdResponse{
+  repeated Group groups = 1;
+}
+
+message UpdateGroupRequest{
+  string id = 1;
+  string title = 2;
+  string description = 3;
+}
+
+message UpdateGroupResponse{
+  Group group = 1;
+}
+
+message DeleteGroupRequest{
+  string id = 1;
+}
+
+message DeleteGroupResponse{}

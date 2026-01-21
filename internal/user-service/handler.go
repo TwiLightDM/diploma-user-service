@@ -35,7 +35,13 @@ func (h *UserHandler) Login(ctx context.Context, req *userservicepb.LoginRequest
 }
 
 func (h *UserHandler) SignUp(ctx context.Context, req *userservicepb.SignUpRequest) (*userservicepb.SignUpResponse, error) {
-	err := h.service.SignUp(ctx, req.Email, req.Password, req.FullName, req.Role)
+	user, err := h.service.SignUp(ctx, &entities.User{
+		Email:    req.Email,
+		Password: req.Password,
+		FullName: req.FullName,
+		Role:     req.Role,
+	})
+
 	if err != nil {
 		st, ok := status.FromError(err)
 		if !ok {
@@ -48,11 +54,15 @@ func (h *UserHandler) SignUp(ctx context.Context, req *userservicepb.SignUpReque
 		}
 	}
 
-	return &userservicepb.SignUpResponse{}, nil
+	return &userservicepb.SignUpResponse{
+		Id:       user.Id,
+		Email:    user.Email,
+		FullName: user.FullName,
+	}, nil
 }
 
 func (h *UserHandler) ReadUser(ctx context.Context, req *userservicepb.ReadUserRequest) (*userservicepb.ReadUserResponse, error) {
-	user, err := h.service.ReedById(ctx, req.Id)
+	user, err := h.service.ReedUserById(ctx, req.Id)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package groupmemberservice;
+
+option go_package = "proto/groupmemberservicepb";
+
+service GroupMemberService {
+  rpc CreateGroupMember(CreateGroupMemberRequest) returns (CreateGroupMemberResponse);
+  rpc ReadAllGroupMembersByUserId(ReadAllGroupMembersByUserIdRequest) returns (ReadAllGroupMembersByUserIdResponse);
+  rpc ReadAllGroupMembersByGroupId(ReadAllGroupMembersByGroupIdRequest) returns (ReadAllGroupMembersByGroupIdResponse);
+  rpc DeleteGroupMember(DeleteGroupMemberRequest) returns (DeleteGroupMemberResponse);
+}
+
+message GroupMember{
+  string id = 1;
+  string user_id = 2;
+  string group_id = 3;
+}
+
+message CreateGroupMemberRequest{
+  string user_id = 1;
+  string group_id = 2;
+}
+
+message CreateGroupMemberResponse{
+  GroupMember group_member = 1;
+}
+
+message ReadAllGroupMembersByUserIdRequest{
+  string user_id = 1;
+}
+
+message ReadAllGroupMembersByUserIdResponse{
+  repeated GroupMember group_members = 1;
+}
+
+message ReadAllGroupMembersByGroupIdRequest{
+  string group_id = 1;
+}
+
+message ReadAllGroupMembersByGroupIdResponse{
+  repeated GroupMember group_members = 1;
+}
+
+message DeleteGroupMemberRequest{
+  string id = 1;
+}
+
+message DeleteGroupMemberResponse{}

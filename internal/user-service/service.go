@@ -12,8 +12,8 @@ import (
 
 type UserService interface {
 	Login(ctx context.Context, email, password string) (string, *time.Time, string, *time.Time, error)
-	SignUp(ctx context.Context, email, password, fullName, role string) error
-	ReedById(ctx context.Context, id string) (*entities.User, error)
+	SignUp(ctx context.Context, user *entities.User) (*entities.User, error)
+	ReedUserById(ctx context.Context, id string) (*entities.User, error)
 	UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error)
 	UpdatePassword(ctx context.Context, user *entities.User) error
 }
@@ -62,46 +62,46 @@ func (s *userService) Login(ctx context.Context, email, password string) (string
 	return accessToken, accessExpiresAt, refreshToken, refreshExpiresAt, nil
 }
 
-func (s *userService) SignUp(ctx context.Context, email, password, fullName, role string) error {
+func (s *userService) SignUp(ctx context.Context, user *entities.User) (*entities.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
 
-	existing, err := s.repo.ReadByEmail(ctx, email)
+	existing, err := s.repo.ReadByEmail(ctx, user.Email)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if existing != nil {
-		return errors.New("user already exists")
+		return nil, errors.New("user already exists")
 	}
 
-	ok := s.validate.IsValidEmail(email)
+	ok := s.validate.IsValidEmail(user.Email)
 	if !ok {
-		return errors.New("invalid email")
+		return nil, errors.New("invalid email")
 	}
 
-	ok = s.validate.IsStrongPassword(password)
+	ok = s.validate.IsStrongPassword(user.Password)
 	if !ok {
-		return errors.New("invalid password")
+		return nil, errors.New("invalid password")
 	}
 
-	hashedPassword, salt, err := s.encrypt.HashPassword(password)
+	hashedPassword, salt, err := s.encrypt.HashPassword(user.Password)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	user := entities.User{
-		Id:       uuid.NewString(),
-		FullName: fullName,
-		Email:    email,
-		Password: hashedPassword,
-		Salt:     salt,
-		Role:     role,
+	user.Id = uuid.NewString()
+	user.Password = hashedPassword
+	user.Salt = salt
+
+	err = s.repo.Create(ctx, user)
+	if err != nil {
+		return nil, err
 	}
 
-	return s.repo.Create(ctx, &user)
+	return user, nil
 }
 
-func (s *userService) ReedById(ctx context.Context, id string) (*entities.User, error) {
+func (s *userService) ReedUserById(ctx context.Context, id string) (*entities.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
 

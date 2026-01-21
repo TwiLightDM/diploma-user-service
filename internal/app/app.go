@@ -9,9 +9,13 @@ import (
 	"syscall"
 
 	"github.com/TwiLightDM/diploma-user-service/internal/config"
+	"github.com/TwiLightDM/diploma-user-service/internal/group-member-service"
+	"github.com/TwiLightDM/diploma-user-service/internal/group-service"
 	"github.com/TwiLightDM/diploma-user-service/internal/user-service"
 	"github.com/TwiLightDM/diploma-user-service/package/databases"
 	"github.com/TwiLightDM/diploma-user-service/package/utils"
+	"github.com/TwiLightDM/diploma-user-service/proto/groupmemberservicepb"
+	"github.com/TwiLightDM/diploma-user-service/proto/groupservicepb"
 	"github.com/TwiLightDM/diploma-user-service/proto/userservicepb"
 	"google.golang.org/grpc"
 )
@@ -45,6 +49,14 @@ func Run(cfg *config.Config) error {
 	)
 	userHandler := user_service.NewUserHandler(userService)
 
+	groupRepo := group_service.NewGroupRepository(db)
+	groupService := group_service.NewGroupService(groupRepo)
+	groupHandler := group_service.NewGroupHandler(groupService)
+
+	groupMemberRepo := group_member_service.NewGroupMemberRepository(db)
+	groupMemberService := group_member_service.NewGroupMemberService(groupMemberRepo)
+	groupMemberHandler := group_member_service.NewGroupMemberHandler(groupMemberService)
+
 	listener, err := net.Listen("tcp", cfg.GRPCPort)
 	if err != nil {
 		return err
@@ -54,6 +66,8 @@ func Run(cfg *config.Config) error {
 
 	grpcServer := grpc.NewServer()
 	userservicepb.RegisterUserServiceServer(grpcServer, userHandler)
+	groupservicepb.RegisterGroupServiceServer(grpcServer, groupHandler)
+	groupmemberservicepb.RegisterGroupMemberServiceServer(grpcServer, groupMemberHandler)
 
 	ctx, stop := signal.NotifyContext(
 		context.Background(),
