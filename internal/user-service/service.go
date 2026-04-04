@@ -10,12 +10,11 @@ import (
 	"github.com/google/uuid"
 )
 
-type UserService interface {
-	Login(ctx context.Context, email, password string) (string, *time.Time, string, *time.Time, error)
-	SignUp(ctx context.Context, user *entities.User) (*entities.User, error)
-	ReedUserById(ctx context.Context, id string) (*entities.User, error)
-	UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error)
-	UpdatePassword(ctx context.Context, user *entities.User) error
+type UserRepository interface {
+	Create(ctx context.Context, user *entities.User) error
+	ReadByEmail(ctx context.Context, email string) (*entities.User, error)
+	ReadById(ctx context.Context, id string) (*entities.User, error)
+	Update(ctx context.Context, user *entities.User) (*entities.User, error)
 }
 
 type userService struct {
@@ -62,31 +61,31 @@ func (s *userService) Login(ctx context.Context, email, password string) (string
 	return accessToken, accessExpiresAt, refreshToken, refreshExpiresAt, nil
 }
 
-func (s *userService) SignUp(ctx context.Context, user *entities.User) (*entities.User, error) {
+func (s *userService) SignUp(ctx context.Context, user *entities.User) (*entities.User, string, *time.Time, string, *time.Time, error) {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
 
 	existing, err := s.repo.ReadByEmail(ctx, user.Email)
 	if err != nil {
-		return nil, err
+		return nil, "", nil, "", nil, err
 	}
 	if existing != nil {
-		return nil, errors.New("user already exists")
+		return nil, "", nil, "", nil, errors.New("user already exists")
 	}
 
 	ok := s.validate.IsValidEmail(user.Email)
 	if !ok {
-		return nil, errors.New("invalid email")
+		return nil, "", nil, "", nil, errors.New("invalid email")
 	}
 
 	ok = s.validate.IsStrongPassword(user.Password)
 	if !ok {
-		return nil, errors.New("invalid password")
+		return nil, "", nil, "", nil, errors.New("invalid password")
 	}
 
 	hashedPassword, salt, err := s.encrypt.HashPassword(user.Password)
 	if err != nil {
-		return nil, err
+		return nil, "", nil, "", nil, err
 	}
 
 	user.Id = uuid.NewString()
@@ -95,10 +94,24 @@ func (s *userService) SignUp(ctx context.Context, user *entities.User) (*entitie
 
 	err = s.repo.Create(ctx, user)
 	if err != nil {
-		return nil, err
+		return nil, "", nil, "", nil, err
 	}
 
-	return user, nil
+	data := make(map[string]any)
+	data["id"] = user.Id
+	data["role"] = user.Role
+
+	accessToken, accessExpiresAt, err := s.jwt.GenerateAccessJWT(data)
+	if err != nil {
+		return nil, "", nil, "", nil, err
+	}
+
+	refreshToken, refreshExpiresAt, err := s.jwt.GenerateRefreshJWT(data)
+	if err != nil {
+		return nil, "", nil, "", nil, err
+	}
+
+	return user, accessToken, accessExpiresAt, refreshToken, refreshExpiresAt, nil
 }
 
 func (s *userService) ReedUserById(ctx context.Context, id string) (*entities.User, error) {

@@ -8,12 +8,12 @@ import (
 	"github.com/google/uuid"
 )
 
-type GroupService interface {
-	CreateGroup(ctx context.Context, group *entities.Group) (*entities.Group, error)
-	ReedGroupById(ctx context.Context, id string) (*entities.Group, error)
-	ReadAllGroupsByOwnerId(ctx context.Context, ownerId string) ([]entities.Group, error)
-	UpdateGroup(ctx context.Context, group *entities.Group) (*entities.Group, error)
-	DeleteGroup(ctx context.Context, id string) error
+type GroupRepository interface {
+	Create(ctx context.Context, group *entities.Group) error
+	ReadById(ctx context.Context, id string) (*entities.Group, error)
+	ReadAllByOwnerId(ctx context.Context, ownerId string) ([]entities.Group, error)
+	Update(ctx context.Context, group *entities.Group) (*entities.Group, error)
+	Delete(ctx context.Context, id string) error
 }
 
 type groupService struct {

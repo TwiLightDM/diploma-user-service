@@ -8,11 +8,11 @@ import (
 	"github.com/google/uuid"
 )
 
-type GroupMemberService interface {
-	CreateGroupMember(ctx context.Context, groupMember *entities.GroupMember) (*entities.GroupMember, error)
-	ReadAllGroupMembersByUserId(ctx context.Context, userId string) ([]entities.GroupMember, error)
-	ReadAllGroupMembersByGroupId(ctx context.Context, groupId string) ([]entities.GroupMember, error)
-	DeleteGroupMember(ctx context.Context, id string) error
+type GroupMemberRepository interface {
+	Create(ctx context.Context, groupMember *entities.GroupMember) error
+	ReadAllByUserId(ctx context.Context, userId string) ([]entities.GroupMember, error)
+	ReadAllByGroupId(ctx context.Context, groupId string) ([]entities.GroupMember, error)
+	Delete(ctx context.Context, id string) error
 }
 
 type groupMemberService struct {

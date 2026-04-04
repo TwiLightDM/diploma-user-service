@@ -9,6 +9,13 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+type GroupMemberService interface {
+	CreateGroupMember(ctx context.Context, groupMember *entities.GroupMember) (*entities.GroupMember, error)
+	ReadAllGroupMembersByUserId(ctx context.Context, userId string) ([]entities.GroupMember, error)
+	ReadAllGroupMembersByGroupId(ctx context.Context, groupId string) ([]entities.GroupMember, error)
+	DeleteGroupMember(ctx context.Context, id string) error
+}
+
 type GroupMemberHandler struct {
 	groupmemberservicepb.UnimplementedGroupMemberServiceServer
 	service GroupMemberService

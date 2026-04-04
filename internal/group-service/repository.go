@@ -8,14 +8,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type GroupRepository interface {
-	Create(ctx context.Context, group *entities.Group) error
-	ReadById(ctx context.Context, id string) (*entities.Group, error)
-	ReadAllByOwnerId(ctx context.Context, ownerId string) ([]entities.Group, error)
-	Update(ctx context.Context, group *entities.Group) (*entities.Group, error)
-	Delete(ctx context.Context, id string) error
-}
-
 type groupRepository struct {
 	db *gorm.DB
 }

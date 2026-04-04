@@ -9,6 +9,14 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+type GroupService interface {
+	CreateGroup(ctx context.Context, group *entities.Group) (*entities.Group, error)
+	ReedGroupById(ctx context.Context, id string) (*entities.Group, error)
+	ReadAllGroupsByOwnerId(ctx context.Context, ownerId string) ([]entities.Group, error)
+	UpdateGroup(ctx context.Context, group *entities.Group) (*entities.Group, error)
+	DeleteGroup(ctx context.Context, id string) error
+}
+
 type GroupHandler struct {
 	groupservicepb.UnimplementedGroupServiceServer
 	service GroupService

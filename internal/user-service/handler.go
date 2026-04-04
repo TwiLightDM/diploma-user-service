@@ -3,6 +3,7 @@ package user_service
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/TwiLightDM/diploma-user-service/internal/entities"
 	"github.com/TwiLightDM/diploma-user-service/proto/userservicepb"
@@ -10,6 +11,14 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
+
+type UserService interface {
+	Login(ctx context.Context, email, password string) (string, *time.Time, string, *time.Time, error)
+	SignUp(ctx context.Context, user *entities.User) (*entities.User, string, *time.Time, string, *time.Time, error)
+	ReedUserById(ctx context.Context, id string) (*entities.User, error)
+	UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error)
+	UpdatePassword(ctx context.Context, user *entities.User) error
+}
 
 type UserHandler struct {
 	userservicepb.UnimplementedUserServiceServer
@@ -35,7 +44,7 @@ func (h *UserHandler) Login(ctx context.Context, req *userservicepb.LoginRequest
 }
 
 func (h *UserHandler) SignUp(ctx context.Context, req *userservicepb.SignUpRequest) (*userservicepb.SignUpResponse, error) {
-	user, err := h.service.SignUp(ctx, &entities.User{
+	user, accessToken, accessExpiresAt, refreshToken, RefreshExpiresAt, err := h.service.SignUp(ctx, &entities.User{
 		Email:    req.Email,
 		Password: req.Password,
 		FullName: req.FullName,
@@ -55,9 +64,16 @@ func (h *UserHandler) SignUp(ctx context.Context, req *userservicepb.SignUpReque
 	}
 
 	return &userservicepb.SignUpResponse{
-		Id:       user.Id,
-		Email:    user.Email,
-		FullName: user.FullName,
+		AccessToken:      accessToken,
+		AccessExpiresAt:  timestamppb.New(*accessExpiresAt),
+		RefreshToken:     refreshToken,
+		RefreshExpiresAt: timestamppb.New(*RefreshExpiresAt),
+		User: &userservicepb.User{
+			Id:       user.Id,
+			Email:    user.Email,
+			FullName: user.FullName,
+			Role:     user.Role,
+		},
 	}, nil
 }
 
@@ -68,8 +84,12 @@ func (h *UserHandler) ReadUser(ctx context.Context, req *userservicepb.ReadUserR
 	}
 
 	return &userservicepb.ReadUserResponse{
-		Email:    user.Email,
-		FullName: user.FullName,
+		User: &userservicepb.User{
+			Id:       user.Id,
+			Email:    user.Email,
+			FullName: user.FullName,
+			Role:     user.Role,
+		},
 	}, nil
 }
 
@@ -84,8 +104,12 @@ func (h *UserHandler) UpdateUser(ctx context.Context, req *userservicepb.UpdateU
 	}
 
 	return &userservicepb.UpdateUserResponse{
-		Email:    updatedUser.Email,
-		FullName: updatedUser.FullName,
+		User: &userservicepb.User{
+			Id:       updatedUser.Id,
+			Email:    updatedUser.Email,
+			FullName: updatedUser.FullName,
+			Role:     updatedUser.Role,
+		},
 	}, nil
 }
 
