@@ -15,6 +15,7 @@ import (
 type UserService interface {
 	Login(ctx context.Context, email, password string) (string, *time.Time, string, *time.Time, error)
 	SignUp(ctx context.Context, user *entities.User) (*entities.User, string, *time.Time, string, *time.Time, error)
+	Refresh(ctx context.Context, id, role string) (string, *time.Time, string, *time.Time, error)
 	ReedUserById(ctx context.Context, id string) (*entities.User, error)
 	UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error)
 	UpdatePassword(ctx context.Context, user *entities.User) error
@@ -74,6 +75,20 @@ func (h *UserHandler) SignUp(ctx context.Context, req *userservicepb.SignUpReque
 			FullName: user.FullName,
 			Role:     user.Role,
 		},
+	}, nil
+}
+
+func (h *UserHandler) Refresh(ctx context.Context, req *userservicepb.RefreshRequest) (*userservicepb.RefreshResponse, error) {
+	accessToken, accessExpiresAt, refreshToken, RefreshExpiresAt, err := h.service.Refresh(ctx, req.Id, req.Role)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &userservicepb.RefreshResponse{
+		AccessToken:      accessToken,
+		AccessExpiresAt:  timestamppb.New(*accessExpiresAt),
+		RefreshToken:     refreshToken,
+		RefreshExpiresAt: timestamppb.New(*RefreshExpiresAt),
 	}, nil
 }
 

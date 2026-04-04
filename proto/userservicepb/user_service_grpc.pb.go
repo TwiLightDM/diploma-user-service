@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	UserService_Login_FullMethodName          = "/userservice.UserService/Login"
 	UserService_SignUp_FullMethodName         = "/userservice.UserService/SignUp"
+	UserService_Refresh_FullMethodName        = "/userservice.UserService/Refresh"
 	UserService_ReadUser_FullMethodName       = "/userservice.UserService/ReadUser"
 	UserService_UpdateUser_FullMethodName     = "/userservice.UserService/UpdateUser"
 	UserService_ChangePassword_FullMethodName = "/userservice.UserService/ChangePassword"
@@ -32,6 +33,7 @@ const (
 type UserServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpResponse, error)
+	Refresh(ctx context.Context, in *RefreshRequest, opts ...grpc.CallOption) (*RefreshResponse, error)
 	ReadUser(ctx context.Context, in *ReadUserRequest, opts ...grpc.CallOption) (*ReadUserResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
@@ -59,6 +61,16 @@ func (c *userServiceClient) SignUp(ctx context.Context, in *SignUpRequest, opts 
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SignUpResponse)
 	err := c.cc.Invoke(ctx, UserService_SignUp_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) Refresh(ctx context.Context, in *RefreshRequest, opts ...grpc.CallOption) (*RefreshResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RefreshResponse)
+	err := c.cc.Invoke(ctx, UserService_Refresh_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -101,6 +113,7 @@ func (c *userServiceClient) ChangePassword(ctx context.Context, in *ChangePasswo
 type UserServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error)
+	Refresh(context.Context, *RefreshRequest) (*RefreshResponse, error)
 	ReadUser(context.Context, *ReadUserRequest) (*ReadUserResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
@@ -119,6 +132,9 @@ func (UnimplementedUserServiceServer) Login(context.Context, *LoginRequest) (*Lo
 }
 func (UnimplementedUserServiceServer) SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SignUp not implemented")
+}
+func (UnimplementedUserServiceServer) Refresh(context.Context, *RefreshRequest) (*RefreshResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Refresh not implemented")
 }
 func (UnimplementedUserServiceServer) ReadUser(context.Context, *ReadUserRequest) (*ReadUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ReadUser not implemented")
@@ -182,6 +198,24 @@ func _UserService_SignUp_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).SignUp(ctx, req.(*SignUpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_Refresh_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefreshRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).Refresh(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_Refresh_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).Refresh(ctx, req.(*RefreshRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -254,6 +288,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SignUp",
 			Handler:    _UserService_SignUp_Handler,
+		},
+		{
+			MethodName: "Refresh",
+			Handler:    _UserService_Refresh_Handler,
 		},
 		{
 			MethodName: "ReadUser",

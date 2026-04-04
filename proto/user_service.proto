@@ -9,6 +9,7 @@ option go_package = "proto/userservicepb";
 service UserService {
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc SignUp(SignUpRequest) returns (SignUpResponse);
+  rpc Refresh(RefreshRequest) returns (RefreshResponse);
   rpc ReadUser(ReadUserRequest) returns (ReadUserResponse);
   rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
   rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
@@ -46,6 +47,18 @@ message SignUpResponse{
   string refresh_token = 3;
   google.protobuf.Timestamp refresh_expires_at = 4;
   User user = 5;
+}
+
+message RefreshRequest{
+  string id = 1;
+  string role = 2;
+}
+
+message RefreshResponse{
+  string access_token = 1;
+  google.protobuf.Timestamp access_expires_at = 2;
+  string refresh_token = 3;
+  google.protobuf.Timestamp refresh_expires_at = 4;
 }
 
 message ReadUserRequest{

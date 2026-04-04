@@ -114,6 +114,24 @@ func (s *userService) SignUp(ctx context.Context, user *entities.User) (*entitie
 	return user, accessToken, accessExpiresAt, refreshToken, refreshExpiresAt, nil
 }
 
+func (s *userService) Refresh(_ context.Context, id, role string) (string, *time.Time, string, *time.Time, error) {
+	data := make(map[string]any)
+	data["id"] = id
+	data["role"] = role
+
+	accessToken, accessExpiresAt, err := s.jwt.GenerateAccessJWT(data)
+	if err != nil {
+		return "", nil, "", nil, err
+	}
+
+	refreshToken, refreshExpiresAt, err := s.jwt.GenerateRefreshJWT(data)
+	if err != nil {
+		return "", nil, "", nil, err
+	}
+
+	return accessToken, accessExpiresAt, refreshToken, refreshExpiresAt, nil
+}
+
 func (s *userService) ReedUserById(ctx context.Context, id string) (*entities.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
