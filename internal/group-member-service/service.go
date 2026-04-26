@@ -24,7 +24,7 @@ func NewGroupMemberService(repo GroupMemberRepository) GroupMemberService {
 }
 
 func (s *groupMemberService) CreateGroupMember(ctx context.Context, groupMember *entities.GroupMember) (*entities.GroupMember, error) {
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	groupMember.Id = uuid.NewString()
@@ -38,7 +38,7 @@ func (s *groupMemberService) CreateGroupMember(ctx context.Context, groupMember 
 }
 
 func (s *groupMemberService) ReadAllGroupMembersByUserId(ctx context.Context, userId string) ([]entities.GroupMember, error) {
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	groupMember, err := s.repo.ReadAllByUserId(ctx, userId)
@@ -50,7 +50,7 @@ func (s *groupMemberService) ReadAllGroupMembersByUserId(ctx context.Context, us
 }
 
 func (s *groupMemberService) ReadAllGroupMembersByGroupId(ctx context.Context, groupId string) ([]entities.GroupMember, error) {
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	groupMembers, err := s.repo.ReadAllByGroupId(ctx, groupId)
@@ -62,7 +62,7 @@ func (s *groupMemberService) ReadAllGroupMembersByGroupId(ctx context.Context, g
 }
 
 func (s *groupMemberService) DeleteGroupMember(ctx context.Context, id string) error {
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	err := s.repo.Delete(ctx, id)

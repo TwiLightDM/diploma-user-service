@@ -29,7 +29,7 @@ func NewUserService(repo UserRepository, validate utils.ValidationService, jwt u
 }
 
 func (s *userService) Login(ctx context.Context, email, password string) (string, *time.Time, string, *time.Time, error) {
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	user, err := s.repo.ReadByEmail(ctx, email)
@@ -62,7 +62,7 @@ func (s *userService) Login(ctx context.Context, email, password string) (string
 }
 
 func (s *userService) SignUp(ctx context.Context, user *entities.User) (*entities.User, string, *time.Time, string, *time.Time, error) {
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	existing, err := s.repo.ReadByEmail(ctx, user.Email)
@@ -133,7 +133,7 @@ func (s *userService) Refresh(_ context.Context, id, role string) (string, *time
 }
 
 func (s *userService) ReedUserById(ctx context.Context, id string) (*entities.User, error) {
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	user, err := s.repo.ReadById(ctx, id)
@@ -145,7 +145,7 @@ func (s *userService) ReedUserById(ctx context.Context, id string) (*entities.Us
 }
 
 func (s *userService) UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error) {
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	var err error
@@ -159,7 +159,7 @@ func (s *userService) UpdateUser(ctx context.Context, user *entities.User) (*ent
 }
 
 func (s *userService) UpdatePassword(ctx context.Context, user *entities.User) error {
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	var err error

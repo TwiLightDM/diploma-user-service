@@ -25,7 +25,7 @@ func NewGroupService(repo GroupRepository) GroupService {
 }
 
 func (s *groupService) CreateGroup(ctx context.Context, group *entities.Group) (*entities.Group, error) {
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	group.Id = uuid.NewString()
@@ -39,7 +39,7 @@ func (s *groupService) CreateGroup(ctx context.Context, group *entities.Group) (
 }
 
 func (s *groupService) ReedGroupById(ctx context.Context, id string) (*entities.Group, error) {
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	group, err := s.repo.ReadById(ctx, id)
@@ -51,7 +51,7 @@ func (s *groupService) ReedGroupById(ctx context.Context, id string) (*entities.
 }
 
 func (s *groupService) ReadAllGroupsByOwnerId(ctx context.Context, ownerId string) ([]entities.Group, error) {
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	groups, err := s.repo.ReadAllByOwnerId(ctx, ownerId)
@@ -63,7 +63,7 @@ func (s *groupService) ReadAllGroupsByOwnerId(ctx context.Context, ownerId strin
 }
 
 func (s *groupService) UpdateGroup(ctx context.Context, group *entities.Group) (*entities.Group, error) {
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	var err error
@@ -77,7 +77,7 @@ func (s *groupService) UpdateGroup(ctx context.Context, group *entities.Group) (
 }
 
 func (s *groupService) DeleteGroup(ctx context.Context, id string) error {
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	err := s.repo.Delete(ctx, id)
