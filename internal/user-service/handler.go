@@ -16,7 +16,8 @@ type UserService interface {
 	Login(ctx context.Context, email, password string) (string, *time.Time, string, *time.Time, error)
 	SignUp(ctx context.Context, user *entities.User) (*entities.User, string, *time.Time, string, *time.Time, error)
 	Refresh(ctx context.Context, id, role string) (string, *time.Time, string, *time.Time, error)
-	ReedUserById(ctx context.Context, id string) (*entities.User, error)
+	ReadUserById(ctx context.Context, id string) (*entities.User, error)
+	ReadAll(ctx context.Context) ([]entities.User, error)
 	UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error)
 	UpdatePassword(ctx context.Context, user *entities.User) error
 }
@@ -93,7 +94,7 @@ func (h *UserHandler) Refresh(ctx context.Context, req *userservicepb.RefreshReq
 }
 
 func (h *UserHandler) ReadUser(ctx context.Context, req *userservicepb.ReadUserRequest) (*userservicepb.ReadUserResponse, error) {
-	user, err := h.service.ReedUserById(ctx, req.Id)
+	user, err := h.service.ReadUserById(ctx, req.Id)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -108,6 +109,27 @@ func (h *UserHandler) ReadUser(ctx context.Context, req *userservicepb.ReadUserR
 	}, nil
 }
 
+func (h *UserHandler) ReadUsers(ctx context.Context, _ *userservicepb.ReadUsersRequest) (*userservicepb.ReadUsersResponse, error) {
+	users, err := h.service.ReadAll(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	usersPb := make([]*userservicepb.User, 0, len(users))
+	for _, user := range users {
+		usersPb = append(usersPb, &userservicepb.User{
+			Id:       user.Id,
+			Email:    user.Email,
+			FullName: user.FullName,
+			Role:     user.Role,
+		})
+	}
+
+	return &userservicepb.ReadUsersResponse{
+		Users: usersPb,
+	}, nil
+}
+
 func (h *UserHandler) UpdateUser(ctx context.Context, req *userservicepb.UpdateUserRequest) (*userservicepb.UpdateUserResponse, error) {
 	updatedUser, err := h.service.UpdateUser(ctx, &entities.User{
 		Id:       req.Id,
@@ -119,6 +141,25 @@ func (h *UserHandler) UpdateUser(ctx context.Context, req *userservicepb.UpdateU
 	}
 
 	return &userservicepb.UpdateUserResponse{
+		User: &userservicepb.User{
+			Id:       updatedUser.Id,
+			Email:    updatedUser.Email,
+			FullName: updatedUser.FullName,
+			Role:     updatedUser.Role,
+		},
+	}, nil
+}
+
+func (h *UserHandler) UpdateUserRole(ctx context.Context, req *userservicepb.UpdateUserRoleRequest) (*userservicepb.UpdateUserRoleResponse, error) {
+	updatedUser, err := h.service.UpdateUser(ctx, &entities.User{
+		Id:   req.Id,
+		Role: req.Role,
+	})
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &userservicepb.UpdateUserRoleResponse{
 		User: &userservicepb.User{
 			Id:       updatedUser.Id,
 			Email:    updatedUser.Email,

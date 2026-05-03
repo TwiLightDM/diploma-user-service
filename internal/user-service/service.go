@@ -14,6 +14,7 @@ type UserRepository interface {
 	Create(ctx context.Context, user *entities.User) error
 	ReadByEmail(ctx context.Context, email string) (*entities.User, error)
 	ReadById(ctx context.Context, id string) (*entities.User, error)
+	ReadAll(ctx context.Context) ([]entities.User, error)
 	Update(ctx context.Context, user *entities.User) (*entities.User, error)
 }
 
@@ -132,7 +133,7 @@ func (s *userService) Refresh(_ context.Context, id, role string) (string, *time
 	return accessToken, accessExpiresAt, refreshToken, refreshExpiresAt, nil
 }
 
-func (s *userService) ReedUserById(ctx context.Context, id string) (*entities.User, error) {
+func (s *userService) ReadUserById(ctx context.Context, id string) (*entities.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
@@ -142,6 +143,18 @@ func (s *userService) ReedUserById(ctx context.Context, id string) (*entities.Us
 	}
 
 	return user, nil
+}
+
+func (s *userService) ReadAll(ctx context.Context) ([]entities.User, error) {
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
+	defer cancel()
+
+	users, err := s.repo.ReadAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
 
 func (s *userService) UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error) {

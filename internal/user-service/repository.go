@@ -30,6 +30,7 @@ func (r *userRepository) ReadByEmail(ctx context.Context, email string) (*entiti
 		}
 		return nil, err
 	}
+
 	return &user, nil
 }
 
@@ -44,7 +45,22 @@ func (r *userRepository) ReadById(ctx context.Context, id string) (*entities.Use
 		}
 		return nil, err
 	}
+
 	return &user, nil
+}
+
+func (r *userRepository) ReadAll(ctx context.Context) ([]entities.User, error) {
+	var users []entities.User
+	if err := r.db.
+		WithContext(ctx).
+		Find(&users).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return users, nil
 }
 
 func (r *userRepository) Update(ctx context.Context, user *entities.User) (*entities.User, error) {
