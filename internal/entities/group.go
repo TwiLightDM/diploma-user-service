@@ -7,5 +7,5 @@ type Group struct {
 	Title       string         `json:"title"`
 	Description string         `json:"description"`
 	OwnerId     string         `json:"owner_id"`
-	DeleteAt    gorm.DeletedAt `gorm:"index"`
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
 }
