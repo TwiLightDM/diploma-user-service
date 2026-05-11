@@ -54,7 +54,7 @@ func Run(cfg *config.Config) error {
 	groupHandler := group_service.NewGroupHandler(groupService)
 
 	groupMemberRepo := group_member_service.NewGroupMemberRepository(db)
-	groupMemberService := group_member_service.NewGroupMemberService(groupMemberRepo)
+	groupMemberService := group_member_service.NewGroupMemberService(groupMemberRepo, userRepo)
 	groupMemberHandler := group_member_service.NewGroupMemberHandler(groupMemberService)
 
 	listener, err := net.Listen("tcp", cfg.GRPCPort)
