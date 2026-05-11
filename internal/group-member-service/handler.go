@@ -10,7 +10,7 @@ import (
 )
 
 type GroupMemberService interface {
-	CreateGroupMember(ctx context.Context, groupMember *entities.GroupMember) (*entities.GroupMember, error)
+	CreateGroupMember(ctx context.Context, email, groupId string) (*entities.GroupMember, error)
 	ReadAllGroupMembersByUserId(ctx context.Context, userId string) ([]entities.GroupMember, error)
 	ReadAllGroupMembersByGroupId(ctx context.Context, groupId string) ([]entities.GroupMember, error)
 	DeleteGroupMember(ctx context.Context, id string) error
@@ -26,10 +26,7 @@ func NewGroupMemberHandler(service GroupMemberService) *GroupMemberHandler {
 }
 
 func (h *GroupMemberHandler) CreateGroupMember(ctx context.Context, req *groupmemberservicepb.CreateGroupMemberRequest) (*groupmemberservicepb.CreateGroupMemberResponse, error) {
-	groupMember, err := h.service.CreateGroupMember(ctx, &entities.GroupMember{
-		UserId:  req.UserId,
-		GroupId: req.GroupId,
-	})
+	groupMember, err := h.service.CreateGroupMember(ctx, req.Email, req.GroupId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

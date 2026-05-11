@@ -83,7 +83,7 @@ func (x *GroupMember) GetGroupId() string {
 
 type CreateGroupMemberRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	GroupId       string                 `protobuf:"bytes,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -119,9 +119,9 @@ func (*CreateGroupMemberRequest) Descriptor() ([]byte, []int) {
 	return file_proto_group_member_service_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CreateGroupMemberRequest) GetUserId() string {
+func (x *CreateGroupMemberRequest) GetEmail() string {
 	if x != nil {
-		return x.UserId
+		return x.Email
 	}
 	return ""
 }
@@ -441,9 +441,9 @@ const file_proto_group_member_service_proto_rawDesc = "" +
 	"\vGroupMember\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x19\n" +
-	"\bgroup_id\x18\x03 \x01(\tR\agroupId\"N\n" +
-	"\x18CreateGroupMemberRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x19\n" +
+	"\bgroup_id\x18\x03 \x01(\tR\agroupId\"K\n" +
+	"\x18CreateGroupMemberRequest\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x19\n" +
 	"\bgroup_id\x18\x02 \x01(\tR\agroupId\"_\n" +
 	"\x19CreateGroupMemberResponse\x12B\n" +
 	"\fgroup_member\x18\x01 \x01(\v2\x1f.groupmemberservice.GroupMemberR\vgroupMember\"=\n" +

@@ -15,21 +15,35 @@ type GroupMemberRepository interface {
 	Delete(ctx context.Context, id string) error
 }
 
+type UserRepository interface {
+	ReadByEmail(ctx context.Context, email string) (*entities.User, error)
+}
+
 type groupMemberService struct {
-	repo GroupMemberRepository
+	repo     GroupMemberRepository
+	userRepo UserRepository
 }
 
-func NewGroupMemberService(repo GroupMemberRepository) GroupMemberService {
-	return &groupMemberService{repo: repo}
+func NewGroupMemberService(repo GroupMemberRepository, userRepo UserRepository) GroupMemberService {
+	return &groupMemberService{repo: repo, userRepo: userRepo}
 }
 
-func (s *groupMemberService) CreateGroupMember(ctx context.Context, groupMember *entities.GroupMember) (*entities.GroupMember, error) {
+func (s *groupMemberService) CreateGroupMember(ctx context.Context, email, groupId string) (*entities.GroupMember, error) {
 	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
+	user, err := s.userRepo.ReadByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+
+	groupMember := &entities.GroupMember{
+		GroupId: groupId,
+		UserId:  user.Id,
+	}
 	groupMember.Id = uuid.NewString()
 
-	err := s.repo.Create(ctx, groupMember)
+	err = s.repo.Create(ctx, groupMember)
 	if err != nil {
 		return nil, err
 	}
