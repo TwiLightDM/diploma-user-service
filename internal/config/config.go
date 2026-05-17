@@ -10,12 +10,18 @@ import (
 )
 
 type Config struct {
-	DB struct {
+	Postgres struct {
 		Host     string
 		Port     string
 		User     string
 		Password string
 		Name     string
+	}
+
+	Redis struct {
+		Host     string
+		Port     string
+		Password string
 	}
 
 	GRPCPort string
@@ -36,11 +42,15 @@ func Load() *Config {
 
 	cfg := &Config{}
 
-	cfg.DB.Host = os.Getenv("POSTGRES_HOST")
-	cfg.DB.Port = os.Getenv("POSTGRES_PORT")
-	cfg.DB.User = os.Getenv("POSTGRES_USER")
-	cfg.DB.Password = os.Getenv("POSTGRES_PASSWORD")
-	cfg.DB.Name = os.Getenv("POSTGRES_DB")
+	cfg.Postgres.Host = os.Getenv("POSTGRES_HOST")
+	cfg.Postgres.Port = os.Getenv("POSTGRES_PORT")
+	cfg.Postgres.User = os.Getenv("POSTGRES_USER")
+	cfg.Postgres.Password = os.Getenv("POSTGRES_PASSWORD")
+	cfg.Postgres.Name = os.Getenv("POSTGRES_DB")
+
+	cfg.Redis.Host = os.Getenv("REDIS_HOST")
+	cfg.Redis.Port = os.Getenv("REDIS_PORT")
+	cfg.Redis.Password = os.Getenv("REDIS_PASSWORD")
 
 	cfg.GRPCPort = os.Getenv("GRPC_PORT")
 

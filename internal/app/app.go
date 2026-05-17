@@ -21,12 +21,22 @@ import (
 )
 
 func Run(cfg *config.Config) error {
-	db, err := databases.InitDB(
-		cfg.DB.Host,
-		cfg.DB.Port,
-		cfg.DB.User,
-		cfg.DB.Password,
-		cfg.DB.Name,
+	postgres, err := databases.InitDB(
+		cfg.Postgres.Host,
+		cfg.Postgres.Port,
+		cfg.Postgres.User,
+		cfg.Postgres.Password,
+		cfg.Postgres.Name,
+	)
+	if err != nil {
+		return err
+	}
+
+	redis, err := databases.InitRedis(
+		cfg.Redis.Host,
+		cfg.Redis.Port,
+		cfg.Redis.Password,
+		0,
 	)
 	if err != nil {
 		return err
@@ -40,7 +50,7 @@ func Run(cfg *config.Config) error {
 		cfg.JWT.RefreshDuration,
 	)
 
-	userRepo := user_service.NewUserRepository(db)
+	userRepo := user_service.NewUserRepository(postgres, redis)
 	userService := user_service.NewUserService(
 		userRepo,
 		validationService,
@@ -49,11 +59,11 @@ func Run(cfg *config.Config) error {
 	)
 	userHandler := user_service.NewUserHandler(userService)
 
-	groupRepo := group_service.NewGroupRepository(db)
+	groupRepo := group_service.NewGroupRepository(postgres, redis)
 	groupService := group_service.NewGroupService(groupRepo)
 	groupHandler := group_service.NewGroupHandler(groupService)
 
-	groupMemberRepo := group_member_service.NewGroupMemberRepository(db)
+	groupMemberRepo := group_member_service.NewGroupMemberRepository(postgres)
 	groupMemberService := group_member_service.NewGroupMemberService(groupMemberRepo, userRepo)
 	groupMemberHandler := group_member_service.NewGroupMemberHandler(groupMemberService)
 
@@ -88,10 +98,16 @@ func Run(cfg *config.Config) error {
 
 	grpcServer.GracefulStop()
 
-	sqlDB, err := db.DB()
+	sqlDB, err := postgres.DB()
 	if err == nil {
 		log.Println("Closing database connection...")
 		_ = sqlDB.Close()
+	}
+
+	if err = redis.Close(); err != nil {
+		log.Println("Error while disconnecting redis:", err)
+	} else {
+		log.Println("Closing redis connection...")
 	}
 
 	log.Println("User-service stopped gracefully")
