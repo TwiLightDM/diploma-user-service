@@ -116,6 +116,7 @@ func (r *userRepository) ReadAll(ctx context.Context) ([]entities.User, error) {
 
 	if err = r.db.
 		WithContext(ctx).
+		Order("full_name ASC").
 		Find(&users).Error; err != nil {
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {

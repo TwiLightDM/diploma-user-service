@@ -84,6 +84,7 @@ func (r *groupRepository) ReadAllByOwnerId(ctx context.Context, ownerId string) 
 
 	if err = r.db.
 		WithContext(ctx).
+		Order("title ASC").
 		Where("owner_id = ?", ownerId).
 		Find(&groups).Error; err != nil {
 
